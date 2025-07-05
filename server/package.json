@@ -1,0 +1,23 @@
+{
+  "name": "sparkcode",
+  "version": "1.0.0",
+  "description": "AI Code Generation platform to built application in real-time",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "author": "halith_smh",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "@google/genai": "^1.8.0",
+    "@google/generative-ai": "^0.24.1",
+    "dotenv": "^17.0.1",
+    "express": "^5.1.0",
+    "openai": "^5.8.2"
+  }
+}
