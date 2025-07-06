@@ -1,4 +1,5 @@
 import { MODEL, openai } from "../utils/constants.js";
+import { parseJson } from "../utils/helper.js";
 import { CHAT_SYSTEM_PROMPT, TEMPLATE_SYSTEM_PROMPT } from "../utils/prompt.js";
 
 const generateTemplate = async (req, res) => {
@@ -18,22 +19,12 @@ const generateTemplate = async (req, res) => {
                     content: query.trim(),
                 },
             ],
+            response_format: { type: "json_object" },
         });
 
         const rawResponse = response.choices[0].message.content;
-        const jsonString = rawResponse.replace(/```json|```/g, '').trim();
-
-        let parsedResponse;
-
-        try {
-            parsedResponse = JSON.parse(jsonString)
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-            return res.status(500).json({ error: 'Failed to parse response' });
-        }
-
         res.json({
-            data: parsedResponse,
+            data: parseJson(rawResponse),
         });
     } catch (error) {
         console.error('Error generating template:', error);
@@ -45,7 +36,7 @@ const generateChatResponse = async (req, res) => {
     const { query, fileStructure } = req.body;
 
     if (!query || !fileStructure) {
-        return res.status(400).json({ error: 'Query and file structure are required' });
+        return res.status(400).json({ error: 'Prompt and file structure are required' });
     }
 
     try {
@@ -58,22 +49,11 @@ const generateChatResponse = async (req, res) => {
                     content: query.trim(),
                 },
             ],
+            response_format: { type: "json_object" },
         });
-
         const rawResponse = response.choices[0].message.content;
-        const jsonString = rawResponse.replace(/```json|```/g, '').trim();
-
-        let parsedResponse;
-
-        try {
-            parsedResponse = JSON.parse(jsonString)
-        } catch (error) {
-            console.error('Error parsing JSON:', error);
-            return res.status(500).json({ error: 'Failed to parse response' });
-        }
-
         res.json({
-            data: parsedResponse,
+            data: parseJson(rawResponse),
         });
     } catch (error) {
         console.error('Error generating chat response:', error);
