@@ -56,14 +56,24 @@ import js from '@eslint/js'\\nimport globals from 'globals'\\nimport reactHooks 
 
 NEXT.JS STRUCTURE:
 - Use App Router
-- Required: app/layout.tsx, app/page.tsx, next.config.mjs/.ts, postcss.config.mjs, jsconfig/tsconfig.json, eslint.config.mjs, public/
+- Required: app/layout.tsx, app/page.tsx, app/global.css,.gitignore, eslint.config.mjs, next-env.d.ts, next.config.ts, package.json, postcss.config.mjs, README.md, tsconfig.json, public/
 - Always include Tailwind unless CSS is explicitly mentioned
-- next.config defaultValue:
-const nextConfig = { reactStrictMode: true }
-export default nextConfig
+- app/global.css defaultValue:
+@import "tailwindcss";
+- .gitignore defaultValue:
+/node_modules\\n/.pnp\\n.pnp.*\\n.yarn/*\\n!.yarn/patches\\n!.yarn/plugins\\n!.yarn/releases\\n!.yarn/versions\\n/coverage\\n/.next/\\n/out/\\n/build\\n.DS_Store\\n*.pem\\nnpm-debug.log*\\nyarn-debug.log*\\nyarn-error.log*\\n.pnpm-debug.log*\\n.env*\\n.vercel\\n*.tsbuildinfo\\nnext-env.d.ts
+- eslint.config.mjs defaultValue:
+import { dirname } from "path";\\nimport { fileURLToPath } from "url";\\nimport { FlatCompat } from "@eslint/eslintrc";\\n\\nconst __filename = fileURLToPath(import.meta.url);\\nconst __dirname = dirname(__filename);\\n\\nconst compat = new FlatCompat({baseDirectory: __dirname});\\n\\nconst eslintConfig = [...compat.extends("next/core-web-vitals","next/typescript")];\\n\\nexport default eslintConfig;
+- next-env.d.ts defaultValue:
+/// <reference types="next" />\\n/// <reference types="next/image-types/global" />
+- next.config.ts defaultValue:
+import type { NextConfig } from "next";\\n\\nconst nextConfig: NextConfig = {/* config options here */};\\n\\nexport default nextConfig;
+- package.json defaultValue:
+{"name":"test-app","version":"0.1.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint"},"dependencies":{"react":"^19.0.0","react-dom":"^19.0.0","next":"15.3.5"},"devDependencies":{"typescript":"^5","@types/node":"^20","@types/react":"^19","@types/react-dom":"^19","@tailwindcss/postcss":"^4","tailwindcss":"^4","eslint":"^9","eslint-config-next":"15.3.5","@eslint/eslintrc":"^3"}}
 - postcss.config.mjs defaultValue:
-const config = { plugins: ["@tailwindcss/postcss"] }
-export default config
+const config = {plugins: ["@tailwindcss/postcss"]};\\n\\nexport default config;
+- tsconfig.json defaultValue:
+{"compilerOptions":{"target":"ES2017","lib":["dom","dom.iterable","esnext"],"allowJs":true,"skipLibCheck":true,"strict":true,"noEmit":true,"esModuleInterop":true,"module":"esnext","moduleResolution":"bundler","resolveJsonModule":true,"isolatedModules":true,"jsx":"preserve","incremental":true,"plugins":[{"name":"next"}],"paths":{"@/*":["./*"]}},"include":["next-env.d.ts","**/*.ts","**/*.tsx",".next/types/**/*.ts"],"exclude":["node_modules"]}
 
 GENERAL:
 - If nothing is mentioned, default to React (Vite) with JavaScript and Tailwind
@@ -75,6 +85,7 @@ Files go under "type": "file", folders use "type": "folder" and include a "child
 - SAMPLE : "structure":[{"name":"package.json","type":"file","path":"/","defaultValue":"(only for the above available code - crticial files not for genral files)"},{"name":"src","type":"folder","path":"/","children":[{"name":"components","type":"folder","path":"/src/","children":[{"name":"Header.jsx","type":"file","path":"/src/components/"}]}]}]
 - Do not generate your own defaultValue for files other than the ones mentioned above
 - For React_Vite must include public folder in root with empty and a assets folder inside the src folder
+- For Next.js, always include  public/ folder in root
 `
 
 
@@ -87,34 +98,55 @@ ${JSON.stringify(fileStructure, null, 2)}
 CORE INSTRUCTIONS:
 - Generate complete working code for each file listed in the "structure"
 - Use the exact "path" and "type" for every file from the input
-- If "defaultValue" is present, use it directly for that file
-- Do not skip any listed file unless explicitly instructed
-- Only create new files (hooks, utils, constants) if absolutely required for modularity or clean separation
+- If "defaultValue" is present, use it directly — EXCEPT for package.json which must be processed
+- **package.json SPECIAL HANDLING:**
+  - NEVER use defaultValue directly for package.json
+  - Always generate complete merged content
+  - Parse defaultValue as base, add used packages, output full JSON
+- For package.json, NEVER use defaultValue directly — ALWAYS generate the complete merged content
+- Parse the defaultValue JSON as the base
+- Scan ALL generated code files for 'import' or 'require' statements
+- Add ANY new packages found into dependencies or devDependencies
+- For newly added packages (not in defaultValue), assign version: "" (empty string)
+  - This ensures npm/yarn/pnpm will fetch the latest version on install
+  - Example:
+    "lucide-react": ""
+- Sort all dependencies alphabetically
+- Output the complete, valid 'package.json' as a merged JSON string
+
+PACKAGE.JSON MERGE EXAMPLE:
+If defaultValue has: {"dependencies": {"react": "^19.1.0", "react-dom": "^19.1.0"}}
+And code uses: lucide-react, react-router-dom
+Result should be: {"dependencies": {"lucide-react": "", "react": "^19.1.0", "react-dom": "^19.1.0", "react-router-dom": ""}}
 
 DESIGN & UI RULES:
 - UI must be beautiful, responsive, and accessible
 - Use TailwindCSS (v4.1.11) and @tailwindcss/vite (v4.1.11) by default
 - Apply modern styles: proper spacing, visual hierarchy, hover/focus effects
-- Include Framer Motion where suitable for animations
+- Include tailwindcss based animations where suitable for animations
 - Use proper dark/light mode classes where applicable
 - Use Pexels images or https://placehold.co/600x400 as fallback
 - Use Icons to enhance UI always, always use lucide-react
-- Design mobile-first with breakpoints and smooth transitions
+- Follow Responsive Design and smooth transitions
 
 REACT + VITE REQUIREMENTS:
 - Use functional components and hooks
 - Wrap root in React.StrictMode in main.tsx
-- Ensure index.css includes Tailwind directives:
+- Ensure index.css includes Tailwind directive:
   @import "tailwindcss";
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
 - vite.config.ts must use @vitejs/plugin-react-swc and @tailwindcss/vite
-- package.json must include all necessary dependencies
 - Include README.md, eslint.config.ts, and .gitignore with correct content
+- Add relevant reusable components inside src/components folder
+
+NEXT.JS REQUIREMENTS:
+- Use TypeScript by default
+- Ensure app/global.css includes:
+  @import "tailwindcss";
+- define unoptimized attribute for using images. Eg: import Image from 'next/image';  <Image src={} unoptimized .../>
+- Include README.md, .gitignore with correct content
+- Always add relevant reusable components inside app/components folder
 
 CODE QUALITY RULES:
-- Add relevant reusable components inside /src/components
 - If needed, create src/hooks, src/utils, or src/constants
 - Avoid inline styles or unstructured code
 - Add meaningful comments for complex logic
@@ -123,16 +155,12 @@ CODE QUALITY RULES:
 - Persist todos using localStorage if useful
 - Keep folder structure clean and modular
 
-PACKAGE.JSON RULE:
-- When adding any new dependency to package.json, do not include a version number (e.g., "lucide-react": "")
-- Only keep versions for dependencies that were already included via defaultValue
-
 RESPONSE FORMAT:
 - Respond with ONLY valid JSON. No markdown. No extra text.
 - All file paths must match exactly as given in fileStructure
 - All "content" fields must include complete, working code
-- If file is config (like .gitignore, vite.config.ts), use defaultValue
-- If file already includes defaultValue, use it directly
+- For package.json: NEVER use defaultValue, always output merged JSON content
+- For other config files (like .gitignore, vite.config.ts): use defaultValue directly
 - Each item in code.files must include:
   {
     "path": "/src/App.tsx",
@@ -140,13 +168,22 @@ RESPONSE FORMAT:
     "content": "Full file content here"
   }
 
+CRITICAL PACKAGE.JSON RULES:
+1. NEVER output defaultValue for package.json
+2. ALWAYS scan all generated files for imports
+3. ALWAYS merge found packages into defaultValue base
+4. ALWAYS output complete JSON content with all packages
+5. Before finalizing response, verify package.json includes ALL packages from the libraries array
+
+CRITICAL: Before finalizing package.json, scan through ALL generated code files and identify every imported package. Ensure ALL are included in the final package.json dependencies.
+
 RETURN FORMAT:
 {
   "properties": {
     "appName": "todo-app",
     "framework": "react" | "nextjs",
     "language": "typescript" | "javascript",
-    "libraries": ["tailwindcss", "react-icons", ...],
+    "libraries": ["lucide-react", "react-router-dom", ...], // List ALL packages used in code
     "buildTool": "vite" | "next",
   },
   "code": {
@@ -157,9 +194,9 @@ RETURN FORMAT:
         "content": "Full code content"
       },
       {
-        "path": "/vite.config.ts",
+        "path": "/package.json",
         "type": "file",
-        "content": "Use defaultValue if present"
+        "content": "Merged package.json with ALL used packages included"
       }
     ]
   },
