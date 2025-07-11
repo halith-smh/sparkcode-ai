@@ -161,12 +161,6 @@ RESPONSE FORMAT:
 - All "content" fields must include complete, working code
 - For package.json: NEVER use defaultValue, always output merged JSON content
 - For other config files (like .gitignore, vite.config.ts): use defaultValue directly
-- Each item in code.files must include:
-  {
-    "path": "/src/App.tsx",
-    "type": "file",
-    "content": "Full file content here"
-  }
 
 CRITICAL PACKAGE.JSON RULES:
 1. NEVER output defaultValue for package.json
@@ -184,26 +178,51 @@ RETURN FORMAT:
     "framework": "react" | "nextjs",
     "language": "typescript" | "javascript",
     "libraries": ["lucide-react", "react-router-dom", ...], // List ALL packages used in code
-    "buildTool": "vite" | "next",
+    "buildTool": "vite" | "next"
   },
   "code": {
-    "files": [
-      {
-        "path": "/src/App.tsx",
-        "type": "file",
-        "content": "Full code content"
-      },
-      {
-        "path": "/package.json",
-        "type": "file",
-        "content": "Merged package.json with ALL used packages included"
+    "package.json": {
+      "file": {
+        "contents": "..."
       }
-    ]
+    },
+    "src": {
+      "directory": {
+        "App.tsx": {
+          "file": {
+            "contents": "..."
+          }
+        },
+        "main.tsx": {
+          "file": {
+            "contents": "..."
+          }
+        },
+        "components": {
+          "directory": {
+            "Header.tsx": {
+              "file": {
+                "contents": "..."
+              }
+            }
+          }
+        }
+      }
+    },
+    "public": {
+      "directory": {
+        "index.html": {
+          "file": {
+            "contents": "..."
+          }
+        }
+      }
+    }
   },
   "summary": {
-    "overview": "2–3 line summary of what the app does",
-    "implementation": "3–4 line explanation of technical approach, patterns used",
-    "designHighlights": "1–2 lines on visual experience, animations, layout decisions"
+    "overview": "2 line summary of what the app does",
+    "implementation": "2 line explanation of technical approach, patterns used",
+    "designHighlights": "2 line on visual experience, animations, layout decisions"
   }
 }
 `

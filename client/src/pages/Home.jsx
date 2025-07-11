@@ -3,28 +3,65 @@ import NavBar from '../components/NavBar'
 import { UnicornBackground } from '../components/UnicornBackground'
 import { ArrowRightIcon } from 'lucide-react'
 import { spinnerProps } from '../utils/constants'
-import { useState } from 'react'
+import { use, useState } from 'react'
+import { generateTemplate } from '../api/llm'
+import { useNavigate } from 'react-router-dom'
+import { useAppContext } from '../context/AppContext'
 
 const chipItems = ["React", "Next.js", "Tailwind CSS", "TypeScript"]
 
 const Home = () => {
+    const nav = useNavigate();
+
+    const {userPrompt, setUserPrompt, setAppProperties, setApiMessage} = useAppContext();
+
     const [isLoading, setIsLoading] = useState(false);
     const [isInvalidInput, setIsInvalidInput] = useState(false);
 
-    const [userPrompt, setUserPrompt] = useState("");
 
     const handleInputChange = (e) => {
         setIsInvalidInput(false);
         setUserPrompt(e.target.value)
     }
 
-    const handleGenerateApp = () => {
-        if (userPrompt.trim().length === 0){
+    const handleTemplateSuccess = ({ data }) => {
+        // console.log(data);
+        if (data.isReactNext) {
+            setAppProperties({
+                query: userPrompt,
+                fileStructure: {
+                    projectName: data.projectName,
+                    framework: data.framework,
+                    language: data.language,
+                    buildTool: data.buildTool,
+                    structure: data.structure,
+                }
+            });
+            setApiMessage(userPrompt);
+            setIsLoading(false);
+            setUserPrompt("");
+            nav("/build");
+        } else{
+            setIsLoading(false);
+            setIsInvalidInput(true);
+            alert("Please enter a valid prompt to generate a React/Next.js app.");
+            console.error("Invalid app type:", data.message);
+        }
+    }
+
+    const handleGenerateApp = async () => {
+        if (userPrompt.trim().length === 0) {
             setIsInvalidInput(true);
             return;
         }
         setIsLoading(true);
-
+        try {
+            const { data } = await generateTemplate(userPrompt);
+            handleTemplateSuccess(data);
+        } catch (error) {
+            console.error("Error generating app:", error);
+            setIsLoading(false);
+        }
     }
     return (
         <div className='min-h-screen'>
@@ -34,7 +71,7 @@ const Home = () => {
                 <div className="flex flex-col gap-6 items-center relative z-20 pt-4 pb-2 max-w-2xl mx-auto px-4">
                     <div className="text-center space-y-4">
                         <h1 className="text-white text-4xl md:text-5xl font-bold tracking-tight">
-                            Build Apps with <span className="text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">AI</span>
+                            Build Apps with <span className="text-primary bg-gradient-to-r from-primary to-secondary bg-clip-text">AI</span>
                         </h1>
                         <p className="text-gray-300 text-lg md:text-xl max-w-xl mx-auto leading-relaxed py-4">
                             Transform your ideas into fully functional application with intelligent code generation

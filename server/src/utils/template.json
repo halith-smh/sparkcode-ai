@@ -1,0 +1,111 @@
+{
+    "data": {
+        "isReactNext": true,
+        "message": "Creating a React app with TypeScript.",
+        "projectName": "ChattyMate",
+        "framework": "react",
+        "language": "typescript",
+        "buildTool": "vite",
+        "structure": [
+            {
+                "name": "package.json",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "{\"name\":\"test-app\",\"private\":true,\"version\":\"0.0.0\",\"type\":\"module\",\"scripts\":{\"dev\":\"vite\",\"build\":\"vite build\",\"lint\":\"eslint .\",\"preview\":\"vite preview\"},\"dependencies\":{\"react\":\"^19.1.0\",\"react-dom\":\"^19.1.0\"},\"devDependencies\":{\"@eslint/js\":\"^9.29.0\",\"@types/react\":\"^19.1.8\",\"@types/react-dom\":\"^19.1.6\",\"@vitejs/plugin-react-swc\":\"^3.10.2\",\"eslint\":\"^9.29.0\",\"eslint-plugin-react-hooks\":\"^5.2.0\",\"eslint-plugin-react-refresh\":\"^0.4.20\",\"globals\":\"^16.2.0\",\"typescript\":\"~5.8.3\",\"typescript-eslint\":\"^8.34.1\",\"vite\":\"^7.0.0\",\"@tailwindcss/vite\": \"^4.1.11\",\"tailwindcss\": \"^4.1.11\"}}"
+            },
+            {
+                "name": "vite.config.ts",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "import { defineConfig } from 'vite'\nimport react from '@vitejs/plugin-react-swc'\nimport tailwindcss from '@tailwindcss/vite'\n\nexport default defineConfig({plugins: [react(), tailwindcss()]})"
+            },
+            {
+                "name": "tsconfig.node.json",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "{\"compilerOptions\":{\"tsBuildInfoFile\":\"./node_modules/.tmp/tsconfig.node.tsbuildinfo\",\"target\":\"ES2023\",\"lib\":[\"ES2023\"],\"module\":\"ESNext\",\"skipLibCheck\":true,\"moduleResolution\":\"bundler\",\"allowImportingTsExtensions\":true,\"verbatimModuleSyntax\":true,\"moduleDetection\":\"force\",\"noEmit\":true,\"strict\":true,\"noUnusedLocals\":true,\"noUnusedParameters\":true,\"erasableSyntaxOnly\":true,\"noFallthroughCasesInSwitch\":true,\"noUncheckedSideEffectImports\":true},\"include\":[\"vite.config.ts\"]}"
+            },
+            {
+                "name": "tsconfig.json",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "{\"files\":[],\"references\":[{\"path\":\"./tsconfig.app.json\"},{\"path\":\"./tsconfig.node.json\"}]}"
+            },
+            {
+                "name": "tsconfig.app.json",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "{\"compilerOptions\":{\"tsBuildInfoFile\":\"./node_modules/.tmp/tsconfig.app.tsbuildinfo\",\"target\":\"ES2022\",\"useDefineForClassFields\":true,\"lib\":[\"ES2022\",\"DOM\",\"DOM.Iterable\"],\"module\":\"ESNext\",\"skipLibCheck\":true,\"moduleResolution\":\"bundler\",\"allowImportingTsExtensions\":true,\"verbatimModuleSyntax\":true,\"moduleDetection\":\"force\",\"noEmit\":true,\"jsx\":\"react-jsx\",\"strict\":true,\"noUnusedLocals\":true,\"noUnusedParameters\":true,\"erasableSyntaxOnly\":true,\"noFallthroughCasesInSwitch\":true,\"noUncheckedSideEffectImports\":true},\"include\":[\"src\"]}"
+            },
+            {
+                "name": "eslint.config.ts",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "import js from '@eslint/js'\nimport globals from 'globals'\nimport reactHooks from 'eslint-plugin-react-hooks'\nimport reactRefresh from 'eslint-plugin-react-refresh'\nimport tseslint from 'typescript-eslint'\nimport { globalIgnores } from 'eslint/config'\n\nexport default tseslint.config([globalIgnores(['dist']),{files:['**/*.{ts,tsx}'],extends:[js.configs.recommended,tseslint.configs.recommended,reactHooks.configs['recommended-latest'],reactRefresh.configs.vite],languageOptions:{ecmaVersion:2020,globals:globals.browser}}])"
+            },
+            {
+                "name": ".gitignore",
+                "type": "file",
+                "path": "/",
+                "defaultValue": "node_modules\ndist\n*.log\n.vscode/*\n!.vscode/extensions.json\n.DS_Store"
+            },
+            {
+                "name": "index.html",
+                "type": "file",
+                "path": "/"
+            },
+            {
+                "name": "README.MD",
+                "type": "file",
+                "path": "/"
+            },
+            {
+                "name": "public",
+                "type": "folder",
+                "path": "/",
+                "children": []
+            },
+            {
+                "name": "src",
+                "type": "folder",
+                "path": "/",
+                "children": [
+                    {
+                        "name": "assets",
+                        "type": "folder",
+                        "path": "/src/",
+                        "children": []
+                    },
+                    {
+                        "name": "main.tsx",
+                        "type": "file",
+                        "path": "/src/"
+                    },
+                    {
+                        "name": "App.tsx",
+                        "type": "file",
+                        "path": "/src/"
+                    },
+                    {
+                        "name": "index.css",
+                        "type": "file",
+                        "path": "/src/",
+                        "defaultValue": "@import \"tailwindcss\";"
+                    },
+                    {
+                        "name": "vite-env.d.ts",
+                        "type": "file",
+                        "path": "/src/",
+                        "defaultValue": "/// <reference types=\"vite/client\" />"
+                    },
+                    {
+                        "name": "components",
+                        "type": "folder",
+                        "path": "/src/",
+                        "children": []
+                    }
+                ]
+            }
+        ]
+    }
+}

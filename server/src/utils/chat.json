@@ -1,0 +1,124 @@
+{
+    "data": {
+        "properties": {
+            "appName": "ChattyMate",
+            "framework": "react",
+            "language": "typescript",
+            "libraries": [
+                "react-router-dom",
+                "lucide-react",
+                "react-textarea-autosize",
+                "zustand"
+            ],
+            "buildTool": "vite"
+        },
+        "code": {
+            "package.json": {
+                "file": {
+                    "contents": "{\"name\":\"ChattyMate\",\"private\":true,\"version\":\"0.0.0\",\"type\":\"module\",\"scripts\":{\"dev\":\"vite\",\"build\":\"vite build\",\"lint\":\"eslint .\",\"preview\":\"vite preview\"},\"dependencies\":{\"lucide-react\": \"\",\"react\":\"^19.1.0\",\"react-dom\":\"^19.1.0\",\"react-router-dom\": \"\",\"react-textarea-autosize\": \"\",\"zustand\": \"\"},\"devDependencies\":{\"@eslint/js\":\"^9.29.0\",\"@types/react\":\"^19.1.8\",\"@types/react-dom\":\"^19.1.6\",\"@vitejs/plugin-react-swc\":\"^3.10.2\",\"@tailwindcss/vite\": \"^4.1.11\",\"eslint\":\"^9.29.0\",\"eslint-plugin-react-hooks\":\"^5.2.0\",\"eslint-plugin-react-refresh\":\"^0.4.20\",\"globals\":\"^16.2.0\",\"tailwindcss\": \"^4.1.11\",\"typescript\":\"~5.8.3\",\"typescript-eslint\":\"^8.34.1\",\"vite\":\"^7.0.0\"}}"
+                }
+            },
+            "src": {
+                "directory": {
+                    "App.tsx": {
+                        "file": {
+                            "contents": "import { BrowserRouter, Route, Routes } from 'react-router-dom';\nimport ChatPage from './pages/ChatPage';\nimport './index.css';\n\nfunction App() {\n  return (\n    <BrowserRouter>\n      <Routes>\n        <Route path=\"/\" element={<ChatPage />} />\n      </Routes>\n    </BrowserRouter>\n  );\n}\n\nexport default App;"
+                        }
+                    },
+                    "main.tsx": {
+                        "file": {
+                            "contents": "import React from 'react';\nimport ReactDOM from 'react-dom/client';\nimport App from './App.tsx';\n\nReactDOM.createRoot(document.getElementById('root')!).render(\n  <React.StrictMode>\n    <App />\n  </React.StrictMode>,\n)"
+                        }
+                    },
+                    "index.css": {
+                        "file": {
+                            "contents": "@import \"tailwindcss\";\n\nbody {\n  @apply bg-gray-100 dark:bg-gray-900;\n}\n"
+                        }
+                    },
+                    "vite-env.d.ts": {
+                        "file": {
+                            "contents": "/// <reference types=\"vite/client\" />"
+                        }
+                    },
+                    "components": {
+                        "directory": {
+                            "ChatMessage.tsx": {
+                                "file": {
+                                    "contents": "import { MessageSquare } from 'lucide-react';\n\ninterface ChatMessageProps {\n  message: string;\n  isUser: boolean;\n}\n\nconst ChatMessage: React.FC<ChatMessageProps> = ({ message, isUser }) => {\n  return (\n    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>\n      <div className={`bg-${isUser ? 'blue-500' : 'gray-200'} text-${isUser ? 'white' : 'gray-800'} rounded-lg py-2 px-4 max-w-sm`}>\n        {message}\n      </div>\n      {!isUser && <MessageSquare className=\"ml-2 text-gray-500\" />}\n    </div>\n  );\n};\n\nexport default ChatMessage;"
+                                }
+                            },
+                            "ChatInput.tsx": {
+                                "file": {
+                                    "contents": "import { useState } from 'react';\nimport TextareaAutosize from 'react-textarea-autosize';\nimport { Send } from 'lucide-react';\n\ninterface ChatInputProps {\n  onSendMessage: (message: string) => void;\n}\n\nconst ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {\n  const [message, setMessage] = useState('');\n\n  const handleSendMessage = () => {\n    if (message.trim()) {\n      onSendMessage(message);\n      setMessage('');\n    }\n  };\n\n  const handleKeyDown = (event: React.KeyboardEvent) => {\n    if (event.key === 'Enter' && !event.shiftKey) {\n      event.preventDefault();\n      handleSendMessage();\n    }\n  };\n\n  return (\n    <div className=\"flex items-center p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700\">\n      <TextareaAutosize\n        className=\"flex-grow p-2 mx-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500\"\n        placeholder=\"Type your message...\"\n        value={message}\n        onChange={(e) => setMessage(e.target.value)}\n        onKeyDown={handleKeyDown}\n        rows={1}\n        maxRows={4}\n      />\n      <button\n        className=\"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline\"\n        onClick={handleSendMessage}\n      >\n        <Send size={20} />\n      </button>\n    </div>\n  );\n};\n\nexport default ChatInput;"
+                                }
+                            }
+                        }
+                    },
+                    "pages": {
+                        "directory": {
+                            "ChatPage.tsx": {
+                                "file": {
+                                    "contents": "import { useState, useEffect, useRef } from 'react';\nimport ChatMessage from '../components/ChatMessage';\nimport ChatInput from '../components/ChatInput';\nimport { useChatStore } from '../store/chatStore';\n\nconst ChatPage = () => {\n  const chatMessages = useChatStore((state) => state.messages);\n  const addMessage = useChatStore((state) => state.addMessage);\n\n  const chatContainerRef = useRef<HTMLDivElement>(null);\n\n  useEffect(() => {\n    // Scroll to the bottom of the chat container when new messages are added\n    if (chatContainerRef.current) {\n      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;\n    }\n  }, [chatMessages]);\n\n  const handleSendMessage = (message: string) => {\n    // Simulate a response from the AI\n    addMessage({ message: message, isUser: true });\n    setTimeout(() => {\n      addMessage({ message: `AI: ${message}? That's an interesting question!`, isUser: false });\n    }, 1000);\n  };\n\n  return (\n    <div className=\"flex flex-col h-screen\">\n      <header className=\"bg-blue-600 text-white p-4\">\n        <h1 className=\"text-2xl font-bold text-center\">ChattyMate</h1>\n      </header>\n\n      <div className=\"flex-grow overflow-y-auto p-4\" ref={chatContainerRef}>\n        {chatMessages.map((message, index) => (\n          <ChatMessage key={index} message={message.message} isUser={message.isUser} />\n        ))}\n      </div>\n\n      <ChatInput onSendMessage={handleSendMessage} />\n    </div>\n  );\n};\n\nexport default ChatPage;"
+                                }
+                            }
+                        }
+                    },
+                    "store": {
+                        "directory": {
+                            "chatStore.tsx": {
+                                "file": {
+                                    "contents": "import { create } from 'zustand';\n\ninterface ChatMessage {\n  message: string;\n  isUser: boolean;\n}\n\ninterface ChatState {\n  messages: ChatMessage[];\n  addMessage: (message: ChatMessage) => void;\n}\n\nexport const useChatStore = create<ChatState>((set) => ({\n  messages: [],\n  addMessage: (message) => set((state) => ({ messages: [...state.messages, message] })), \n}));"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "index.html": {
+                "file": {
+                    "contents": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <link rel=\"icon\" type=\"image/svg+xml\" href=\"/vite.svg\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>ChattyMate</title>\n  </head>\n  <body>\n    <div id=\"root\"></div>\n    <script type=\"module\" src=\"/src/main.tsx\"></script>\n  </body>\n</html>"
+                }
+            },
+            "README.md": {
+                "file": {
+                    "contents": "# ChattyMate\n\nA simple chat application built with React and TypeScript, styled with Tailwind CSS.\n\n## Features\n\n- Real-time chat interface\n- User and AI message distinction\n- Responsive design\n- Clean and modern UI\n"
+                }
+            },
+            ".gitignore": {
+                "file": {
+                    "contents": "node_modules\ndist\n*.log\n.vscode/*\n!.vscode/extensions.json\n.DS_Store"
+                }
+            },
+            "vite.config.ts": {
+                "file": {
+                    "contents": "import { defineConfig } from 'vite'\nimport react from '@vitejs/plugin-react-swc'\nimport tailwindcss from '@tailwindcss/vite'\n\nexport default defineConfig({plugins: [react(), tailwindcss()]})"
+                }
+            },
+            "eslint.config.ts": {
+                "file": {
+                    "contents": "import js from '@eslint/js'\nimport globals from 'globals'\nimport reactHooks from 'eslint-plugin-react-hooks'\nimport reactRefresh from 'eslint-plugin-react-refresh'\nimport tseslint from 'typescript-eslint'\nimport { globalIgnores } from 'eslint/config'\n\nexport default tseslint.config([globalIgnores(['dist']),{files:['**/*.{ts,tsx}'],extends:[js.configs.recommended,tseslint.configs.recommended,reactHooks.configs['recommended-latest'],reactRefresh.configs.vite],languageOptions:{ecmaVersion:2020,globals:globals.browser}}])"
+                }
+            },
+            "tsconfig.json": {
+                "file": {
+                    "contents": "{\"files\":[],\"references\":[{\"path\":\"./tsconfig.app.json\"},{\"path\":\"./tsconfig.node.json\"}]}"
+                }
+            },
+            "tsconfig.app.json": {
+                "file": {
+                    "contents": "{\"compilerOptions\":{\"tsBuildInfoFile\":\"./node_modules/.tmp/tsconfig.app.tsbuildinfo\",\"target\":\"ES2022\",\"useDefineForClassFields\":true,\"lib\":[\"ES2022\",\"DOM\",\"DOM.Iterable\"],\"module\":\"ESNext\",\"skipLibCheck\":true,\"moduleResolution\":\"bundler\",\"allowImportingTsExtensions\":true,\"verbatimModuleSyntax\":true,\"moduleDetection\":\"force\",\"noEmit\":true,\"jsx\":\"react-jsx\",\"strict\":true,\"noUnusedLocals\":true,\"noUnusedParameters\":true,\"erasableSyntaxOnly\":true,\"noFallthroughCasesInSwitch\":true,\"noUncheckedSideEffectImports\":true},\"include\":[\"src\"]}"
+                }
+            },
+            "tsconfig.node.json": {
+                "file": {
+                    "contents": "{\"compilerOptions\":{\"tsBuildInfoFile\":\"./node_modules/.tmp/tsconfig.node.tsbuildinfo\",\"target\":\"ES2023\",\"lib\":[\"ES2023\"],\"module\":\"ESNext\",\"skipLibCheck\":true,\"moduleResolution\":\"bundler\",\"allowImportingTsExtensions\":true,\"verbatimModuleSyntax\":true,\"moduleDetection\":\"force\",\"noEmit\":true,\"strict\":true,\"noUnusedLocals\":true,\"noUnusedParameters\":true,\"erasableSyntaxOnly\":true,\"noFallthroughCasesInSwitch\":true,\"noUncheckedSideEffectImports\":true},\"include\":[\"vite.config.ts\"]}"
+                }
+            }
+        },
+        "summary": {
+            "overview": "ChattyMate is a simple chat application built with React and TypeScript. It features a real-time chat interface, user and AI message distinction, and a responsive design.",
+            "implementation": "The application uses React for the UI, TypeScript for type safety, and Tailwind CSS for styling. Zustand is used for state management. The chat interface is implemented using functional components and hooks.",
+            "designHighlights": "The application features a clean and modern UI with a focus on readability and user experience. It uses Tailwind CSS for a responsive design and a consistent look and feel."
+        }
+    }
+}

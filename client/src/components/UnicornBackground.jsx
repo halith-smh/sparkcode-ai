@@ -107,7 +107,7 @@ export function UnicornBackground() {
     }, [isLoaded]);
 
     return (
-        <div className="absolute inset-0 w-full h-screen overflow-hidden">
+        <div className="absolute inset-0 w-full h-screen overflow-hidden uvicorn-bg">
             <motion.div
                 data-us-project="Gr1LmwbKSeJOXhpYEdit"
                 className="absolute inset-0 w-full h-[calc(100vh+80px)] z-0"
