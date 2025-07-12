@@ -7,3 +7,23 @@
 .uvicorn-bg a{
     display: none !important;
 }
+
+/* Custom scrollbar styling */
+.scrollbar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4B5563;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  min-height: 10px;
+}
+.scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4B5563 transparent;
+}
