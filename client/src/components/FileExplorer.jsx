@@ -39,13 +39,14 @@ const FileTreeItem = ({ name, item, handleSelectedFile }) => {
     if (item.directory) {
         return (
             <div key={name} className="mb-1">
-                <Accordion isCompact className='px-0'>
+                <Accordion isCompact className='px-0 text-sm'>
                     <AccordionItem
                         key={name}
                         aria-label={`Folder ${name}`}
                         title={name}
-                        className=' cursor-pointer'
-                        startContent={<Folder className='w-[14px]' />}
+                        // className='cursor-pointer text-sm'
+                        className={{label: 'text-sm cursor-pointer'}}
+                        startContent={<Folder className='w-[14px] ml-4 text-secondary' />}
                     >
                         <div>
                             {Object.entries(item.directory).map(([childName, childItem]) => (

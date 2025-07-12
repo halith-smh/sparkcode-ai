@@ -20,6 +20,20 @@ REACT (VITE) STRUCTURE:
 - Use Tailwind by default (unless user specifies CSS)
 - For Tailwind projects, include @tailwindcss/vite": "^4.1.11","tailwindcss": "^4.1.11" in package.json as dependency *must
 - Required: index.html,README.MD,package.json,vite.config.js,main.jsx(x), App.jsx(x), index.css (with @import "tailwindcss";)
+- index.html defaultvalue:
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app-name</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
 - vite.config.js defaultValue:
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'

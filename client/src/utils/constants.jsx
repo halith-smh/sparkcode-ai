@@ -18,3 +18,11 @@ export const spinnerProps = <svg
         fill="currentColor"
     />
 </svg>
+
+export const toastError = {
+    style: {
+        borderRadius: '8px',
+        background: '#18181b',
+        color: '#fff',
+    },
+}

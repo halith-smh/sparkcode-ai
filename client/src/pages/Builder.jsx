@@ -12,6 +12,8 @@ import { File, Fullscreen } from 'lucide-react';
 import WebPreview from '../components/WebPreview';
 import { WebContainer } from '@webcontainer/api';
 import FullScreenModel from '../components/FullScreenModel';
+import toast from 'react-hot-toast';
+import { toastError } from '../utils/constants';
 
 const Builder = () => {
     const nav = useNavigate();
@@ -31,31 +33,33 @@ const Builder = () => {
     const [IframeUrl, setIframeUrl] = useState("");
     const { isOpen, onOpen, onClose } = useDisclosure();
 
+    const [isNpmInstall, setIsNpmInstall] = useState(null);
+    const [isNpmRunDev, setIsNpmRunDev] = useState(null);
+
     const startDevServer = async (webcontainerInstance) => {
+        setIsNpmInstall(false);
         const installProcess = await webcontainerInstance.spawn('npm', ['install']);
         const installExitCode = await installProcess.exit;
 
         if (installExitCode !== 0) {
+            toast.error(error.message, toastError);
             console.error("npm install failed...");
-            throw new Error('Unable to run npm install');
         }
+        setIsNpmInstall(true);
 
-        const devProcess = await webcontainerInstance.spawn('npm', ['run', 'dev']);
-        devProcess.output.pipeTo(new WritableStream({
-            write(data) {
-                console.log('🧪 DEV LOG:', data);
-            }
-        }));
+        setIsNpmRunDev(false);
+        await webcontainerInstance.spawn('npm', ['run', 'dev']);
 
 
         webcontainerInstance.on('server-ready', (port, url) => {
+            toast.success('Preview is ready to view', toastError);
             console.log('✅ WebContainer server is ready at:', url);
-            setIframeUrl(url)
+            setIframeUrl(url);
+            setIsNpmRunDev(true);
             console.info('Iframe src added, now you can preview it');
         });
 
     };
-
 
     const getCode = async () => {
         try {
@@ -67,10 +71,16 @@ const Builder = () => {
 
                 try {
                     if (!webcontainerInstance) {
-                        webcontainerInstance = await WebContainer.boot();
-                        console.log("✅ WebContainer booted");
+                        try {
+                            webcontainerInstance = await WebContainer.boot();
+                            console.log("✅ WebContainer booted");
+                        } catch (error) {
+                            console.error("Booting WebContainer failed:", error.message);
+                            toast.error(error.message, toastError);
+                            return;
+                        }
                     } else {
-                        console.log("♻️ Using existing WebContainer instance");
+                        console.log("Using existing WebContainer instance");
                     }
 
                     try {
@@ -80,13 +90,16 @@ const Builder = () => {
                         await startDevServer(webcontainerInstance);
                     } catch (error) {
                         console.error("Project Files Import on WebContainer: " + error.message);
+                        toast.error(error.message, toastError);
                     }
                 } catch (error) {
+                    toast.error(error.message, toastError);
                     console.error("Initializing WebContainer: " + error.message);
                 }
             }
         } catch (error) {
             console.error("Error:", error.message);
+            toast.error(error.message, toastError);
         }
     };
 
@@ -106,6 +119,10 @@ const Builder = () => {
         } else {
             console.log('No Data Available: DEV PREVIEW');
             nav('/');
+        }
+
+        return () => {
+            webcontainerInstance = null;
         }
     }, []);
 
@@ -145,8 +162,7 @@ const Builder = () => {
                                 <Skeleton className="w-2/5 rounded-lg">
                                     <div className="h-3 w-2/5 rounded-lg bg-default-300" />
                                 </Skeleton>
-                            </div>) : <Summary summary={aiResponse.summary} />}
-
+                            </div>) : <Summary isNpmInstall={isNpmInstall} isNpmRunDev={isNpmRunDev} summary={aiResponse.summary} />}
                         </Card>
                     </div>
 
@@ -187,13 +203,11 @@ const Builder = () => {
                                                 )}
                                             </Tab>
                                         </Tabs>
-
                                     )}
 
                                 {IframeUrl !== "" && <Button onPress={() => onOpen()} className='absolute top-4 right-3.5' size='sm' aria-label="Like">
                                     <Fullscreen className='w-5' /> Full Screen
                                 </Button>}
-
 
                             </CardBody>
                         </Card>

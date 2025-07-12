@@ -85,7 +85,7 @@ const Home = () => {
                             classNames={{
                                 base: "w-full",
                                 input: "resize-y min-h-[120px] max-h-[300px] text-base text-[15px]",
-                                inputWrapper: "bg-default-100/10 border-default-200/20 backdrop-blur-sm",
+                                inputWrapper: "bg-[#18181b] border-default-200/20 backdrop-blur-sm",
                                 label: "text-default-400 text-lg font-semibold mb-2",
                             }}
                             label="Describe your app"
