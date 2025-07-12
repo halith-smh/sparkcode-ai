@@ -7,9 +7,9 @@ const Summary = ({ summary, isNpmInstall, isNpmRunDev }) => {
 
     return (
         <div className='flex flex-col gap-4'>
-            <p>{summary?.designHighlights}</p>
-            <p>{summary?.implementation}</p>
             <p>{summary?.overview}</p>
+            <p>{summary?.implementation}</p>
+            <p>{summary?.designHighlights}</p>
 
             <div>
                 <Accordion className='bg-[#221e1e]' variant="shadow" defaultExpandedKeys={["projectSetUp"]}>

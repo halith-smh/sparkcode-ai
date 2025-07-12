@@ -16,7 +16,7 @@ const FullScreenModel = ({ isOpen, onClose, url }) => {
                     {(onClose) => (
                         <>
                             <ModalBody className="pt-8">
-                                <iframe className='w-full h-12/12 rounded-xl' src={url} frameborder="0"></iframe>
+                                <iframe className='w-full h-12/12 rounded-xl' src={url} frameBorder="0"></iframe>
                             </ModalBody>
 
                         </>

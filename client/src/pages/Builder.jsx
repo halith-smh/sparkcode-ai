@@ -98,8 +98,9 @@ const Builder = () => {
                 }
             }
         } catch (error) {
-            console.error("Error:", error.message);
             toast.error(error.message, toastError);
+            setIsInitialLoading(false);
+            console.error("Error:", error.message);
         }
     };
 

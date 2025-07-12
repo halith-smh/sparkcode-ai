@@ -234,9 +234,9 @@ RETURN FORMAT:
     }
   },
   "summary": {
-    "overview": "2 line summary of what the app does",
-    "implementation": "2 line explanation of technical approach, patterns used",
-    "designHighlights": "2 line on visual experience, animations, layout decisions"
+    "overview": "Clearly state what the app is, what problem it solves, or what its purpose is. Start with "I built" or "I created - [1 line]",
+    "implementation": "Describe how you built the app, mentioning the frameworks, libraries, file structure, and technical patterns you used (e.g., routing, state management, folder structure). - [1 line]",
+    "designHighlights": "Mention UI/UX choices you made — e.g., responsive design, animations, layout structure, and any libraries like Tailwind CSS, Framer Motion, etc. - [1 line]"
   }
 }
 `
