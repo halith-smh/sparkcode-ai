@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { generateChatResponse, generateTemplate } from "../controllers/llm.controller.js";
+import { generateChatResponse, generateTemplate, downloadFiles } from "../controllers/llm.controller.js";
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -7,6 +7,7 @@ const llmRoutes = Router();
 
 llmRoutes.post('/template', generateTemplate);
 llmRoutes.post('/chat', generateChatResponse);
+llmRoutes.post('/download', downloadFiles);
 
 // TEST Routes
 llmRoutes.post('/template/test', async (req, res) => {

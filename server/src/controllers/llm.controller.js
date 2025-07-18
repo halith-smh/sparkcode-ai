@@ -1,3 +1,4 @@
+import JSZip from "jszip";
 import { MODEL, openai } from "../utils/constants.js";
 import { parseJson } from "../utils/helper.js";
 import { CHAT_SYSTEM_PROMPT, TEMPLATE_SYSTEM_PROMPT } from "../utils/prompt.js";
@@ -61,5 +62,45 @@ const generateChatResponse = async (req, res) => {
     }
 }
 
-export { generateTemplate, generateChatResponse };
+const downloadFiles = async (req, res) => {
+    try {
+        const { fileStructure } = req.body;
+        if (!fileStructure) {
+            return res.status(400).json({ error: 'File structure is required' });
+        }
+
+        const zip = new JSZip();
+        const processStructure = (structure, currentPath = '') => {
+            for (const [name, content] of Object.entries(structure)) {
+                const fullPath = currentPath ? `${currentPath}/${name}` : name;
+                
+                if (content.file) {
+                    zip.file(fullPath, content.file.contents);
+                } else if (content.directory) {
+                    zip.folder(fullPath);
+                    processStructure(content.directory, fullPath);
+                }
+            }
+        };
+        
+        processStructure(fileStructure);
+        const zipBuffer = await zip.generateAsync({
+            type: 'nodebuffer',
+            compression: 'DEFLATE',
+            compressionOptions: {
+                level: 6
+            }
+        });
+        res.setHeader('Content-Type', 'application/zip');
+        res.setHeader('Content-Disposition', 'attachment; filename="project-files.zip"');
+        res.setHeader('Content-Length', zipBuffer.length);
+
+        res.send(zipBuffer);
+    } catch (error) {
+        console.error('Error creating zip file:', error);
+        res.status(500).json({ error: 'Failed to create zip file' });
+    }
+};
+
+export { generateTemplate, generateChatResponse, downloadFiles };
 

@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 import NavBar from '../components/NavBar';
-import { generateCode } from '../api/llm';
+import { downloadCode, generateCode } from '../api/llm';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarIcon, Button, Card, CardBody, Image, Skeleton, Spinner, Tab, Tabs, useDisclosure } from '@heroui/react';
 import Summary from '../components/Summary';
 import FileExplorer from '../components/FileExplorer';
 import FileContent from '../components/FileContent';
 import { getFileType } from '../utils/helper';
-import { File, Fullscreen } from 'lucide-react';
-import WebPreview from '../components/WebPreview';
+import { Download, File, Fullscreen } from 'lucide-react';
 import { WebContainer } from '@webcontainer/api';
 import FullScreenModel from '../components/FullScreenModel';
 import toast from 'react-hot-toast';
@@ -114,14 +113,37 @@ const Builder = () => {
         setDisplayEditorFile({ value, type });
     }
 
+    const downloadFiles = async () => {
+        try {
+            if (Object.keys(aiResponse).length > 0) {
+                const response = await downloadCode(aiResponse.code);
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'project-files.zip');
+                document.body.appendChild(link);
+                link.click();
+                // Cleanup
+                link.remove();
+                window.URL.revokeObjectURL(url);
+            }else{
+                toast.error('No files found.')
+            }
+        } catch (error) {
+            console.error('Error downloading files:', error);
+            toast.error('Failed to download files. Please try again.');
+        }
+    };
+
     useEffect(() => {
         if (apiMessage && apiMessage !== "" && appProperties && Object.keys(appProperties).length > 0) {
-            getCode();
+            if (Object.keys(aiResponse).length === 0) {
+                getCode();
+            }
         } else {
             console.log('No Data Available: DEV PREVIEW');
             nav('/');
         }
-
         return () => {
             webcontainerInstance = null;
         }
@@ -194,7 +216,6 @@ const Builder = () => {
                                                 </Card>
                                             </Tab>
                                             <Tab key="preview" title="Preview">
-                                                {/* <WebPreview /> */}
                                                 {IframeUrl ? (
                                                     <iframe src={IframeUrl} className="w-full h-[600px] rounded-lg overflow-auto" />
                                                 ) : (
@@ -204,12 +225,20 @@ const Builder = () => {
                                                 )}
                                             </Tab>
                                         </Tabs>
-                                    )}
-
-                                {IframeUrl !== "" && <Button onPress={() => onOpen()} className='absolute top-4 right-3.5' size='sm' aria-label="Like">
-                                    <Fullscreen className='w-5' /> Full Screen
-                                </Button>}
-
+                                    )
+                                }
+                                {IframeUrl !== "" &&
+                                    (
+                                        <>
+                                            <Button onPress={() => onOpen()} className='absolute top-4 right-3.5' size='sm' aria-label="Like">
+                                                <Fullscreen className='w-5' /> Full Screen
+                                            </Button>
+                                            <Button onPress={() => downloadFiles()} className='absolute top-4 right-35 bg-secondary' size='sm' aria-label="Like">
+                                                <Download className='w-5' /> Download
+                                            </Button>
+                                        </>
+                                    )
+                                }
                             </CardBody>
                         </Card>
                     </div>
